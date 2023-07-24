@@ -1,0 +1,67 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: greeting.gvramana.io
+spec:
+  group: gvramana.io
+  names:
+    kind: Greeting
+    plural: greeting
+    singular: greeting
+    shortNames:
+      - grt
+  scope: Namespaced
+  versions:
+    - name: v1alpha1
+      served: true
+      storage: true
+      schema:
+        # schema used for validation
+        openAPIV3Schema:
+          type: object
+          properties:
+            spec:
+              type: object
+              properties:
+                emailToGreet:
+                  type: string
+                messageToGreet:
+                  type: string
+                replicas:
+                  type: integer
+                  minimum: 1
+                  maximum: 10
+            status:
+              type: object
+              properties:
+                availableReplicas:
+                  type: integer
+
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: greeting-editor
+rules:
+- apiGroups: ["gvramana.io"]
+  resources: ["greeting"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+
+
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name:greeting-editor-binding
+subjects:
+- kind: ServiceAccount
+  name: myserviceaccount
+roleRef:
+  kind: Role
+  name: greeting-editor
+  apiGroup: rbac.authorization.k8s.io
+
+
+
+

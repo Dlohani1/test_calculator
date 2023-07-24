@@ -1,0 +1,45 @@
+kubectl -n elastic-stack exec -it app -- cat /log/app.log
+
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app
+  namespace: elastic-stack
+  labels:
+    name: app
+spec:
+  containers:
+  - name: app
+    image: kodekloud/event-simulator
+    volumeMounts:
+    - mountPath: /log
+      name: log-volume
+
+  - name: sidecar
+    image: kodekloud/filebeat-configured
+    volumeMounts:
+    - mountPath: /var/log/event-simulator/
+      name: log-volume
+
+  volumes:
+  - name: log-volume
+    hostPath:
+      # directory location on host
+      path: /var/log/webapp
+      # this field is optional
+      type: DirectoryOrCreate
+
+
+kubectl run yellow --image=busybox --dry-run=client -o yaml
+
+kubectl run yellow --image=busybox --dry-run=client -o yaml > yellow.yaml
+
+
+An investment in knowledge pays the best interest.
+
+Two things define you: your patience when you have nothing and your attitude when you have everything.
+
+
+
+

@@ -1,0 +1,34 @@
+sudo etcdctl version 
+sudo apt install etcd-client
+sudo ETCDCTL_API=3 etcdctl version
+sudo ETCDCTL_API=3 etcdctl snapshot
+
+kubectl -n kube-system get pods -A
+kubectl -n kube-system get pods -A -o wide | grep etcd
+kubectl -n kube-system describe pod etcd-k8smaster
+
+ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key \
+  snapshot save /opt/backup.txt
+
+sudo ETCDCTL_API=3 etcdctl --endpoints=https://172.31.35.219:2379   --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key   endpoint health
+
+
+ sudo ETCDCTL_API=3 etcdctl --endpoints=https://172.31.35.219:2379   --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key   member list
+
+ sudo ETCDCTL_API=3 etcdctl --endpoints=https://172.31.35.219:2379   --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/server.crt --key=/etc/kubernetes/pki/etcd/server.key   snapshot save /opt/etcd-backup-$(date +%d-%m-%Y)
+
+
+ ETCDCTL_API=3 etcdctl --write-out=table snapshot status etcd-backup-29-03-2023
+
+
+
+kubectl get pods -A
+kubectl -n kube-system get po -o wide | grep etcd
+kubectl -n kube-system describe pod etcd
+
+once the restore is completed we have to update this path etcd data path
+
+ ETCDCTL_API=3 etcdctl snapshot restore /opt/etcd-backup-31-03-2023 --endpoints 172.31.24.140 --data-dir /var/lib/etcd-snapshot
+ vi /etc/kubernetes/manifests/etcd.yaml
+kubectl -n kube-system describe pod etcd

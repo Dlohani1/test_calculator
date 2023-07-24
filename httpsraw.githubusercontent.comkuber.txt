@@ -1,0 +1,41 @@
+https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.3.0/deploy/static/provider/baremetal/deploy.yaml
+
+jmbharathram/myapp:bgdemoapp.v1.0
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-app-service
+spec:
+  selector:
+    run: app
+  ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+    targetPort: 80
+  
+
+
+
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: app-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - path: /home
+            pathType: Exact
+            backend:
+              service:
+                name: my-app-service
+                port:
+                  number: 8080
+
+
+bharatsharath/myapp:blue
+

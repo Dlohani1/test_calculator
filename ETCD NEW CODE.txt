@@ -1,0 +1,59 @@
+all the certificates are existing here
+ ls /etc/kubernetes/pki/ ==(public key infrastructure)
+
+for etcd there is a sub directory all components for etcd 
+ls /etc/kubernetes/pki/etcd 
+
+create one directory
+mkdir backup-certs
+after copy the certificates
+cp -r /etc/kubernetes/pki backup-certs
+ls backup-certs
+upto here tls certificates are backed up
+=======================================================
+create snapshot for etcd control
+apt  install golang-go
+go mod init myproject
+go get github.com/coreos/etcd/etcdctl
+order to get client on the system 
+apt  install etcd-client
+etcdctl ---this command should work
+
+sudo ETCDCTL_API=3 etcdctl snapshot save backup-etcd/snapshot.db --endpoints=https://127.0.0.1:2379 --cacert=/etc/kubernetes/pki/etcd/ca.crt --cert=/etc/kubernetes/pki/etcd/healthcheck-client.crt --key=/etc/kubernetes/pki/etcd/healthcheck-client.key 
+
+ls backup-etcd/
+o/p snapshot.db
+
+we are backuped all the required certificates and keys for cluster componemts 
+=========================================================
+
+kubeadm reset -f 
+kubectl get nodes 
+o/p --connection refused everything is reset 
+
+now we will restore the clusster
+
+cp -r backup-certs/pki /etc/kubernetes/
+ls /etc/kubernetes/pki/
+
+
+now we have to restore etcd server this is the command
+
+ETCDCTL_API=3 etcdctl snapshot restore backup-etcd/snapshot.db
+ls default.etcd/
+apt  install tree
+tree default.etcd/
+know we have to copy member directory completely to different path
+mv default.etcd/member /var/lib/etcd/
+ls /var/lib/etcd/
+tree /var/lib/etcd/  ===> we have successfully moved the things to the destination 
+
+kubeadm init --ignore-preflight-errors=DirAvailable--var-ilb-etcd 
+
+if this will not work we have to remove the var/lin/etcd
+ sudo rm -rf /var/lib/etcd/*
+after this run the kubeadm init command  
+
+  ==== which means that while the cluster is initializing it should ignore data for etcd server and it should take that data from the directory var/lib/etcd  in the previous step we copied in the directory so etcd is going to fetch the information form that directory and kubeadm will do rest of the things for us
+
+

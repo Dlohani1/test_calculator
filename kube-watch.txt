@@ -1,0 +1,7 @@
+xoxb-5168015172369-5148966072822-uPaaN5gkuW8wVkcZF24I0a7g
+
+helm repo add bitnami https://charts.bitnami.com/bitnami
+
+helm repo add robusta https://robusta-charts.storage.googleapis.com
+
+helm show values robusta/kubewatch

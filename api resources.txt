@@ -1,0 +1,23 @@
+Kubelet
+
+Container Advisor (cAdvisor)
+
+Kube-state-metrics
+
+Kubernetes Dashboard
+
+Prometheus
+
+Jaeger
+
+ Kubewatch
+
+Weave Scope
+
+The EFK Stack
+
+kubectl get pods kube-apiserver -n kube-system -o yaml
+ kubectl api-resources
+
+https://github.com/ramanagali/crd.git
+
